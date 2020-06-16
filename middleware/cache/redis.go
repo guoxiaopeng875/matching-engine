@@ -20,7 +20,6 @@ func Init() {
 	_, err := RedisClient.Ping().Result()
 	if err != nil {
 		panic(err)
-	} else {
-		log.Logger.Info("Connected to redis", zap.String("addr", conf.Addr))
 	}
+	log.Logger.Info("Connected to redis", zap.String("addr", conf.Addr))
 }

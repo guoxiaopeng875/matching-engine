@@ -8,7 +8,7 @@ import (
 
 // Trade 成交记录
 type Trade struct {
-	// 挂单id
+	// 挂单id(本来挂在交易委托账本里的订单)
 	MakerId string `json:"maker_id"`
 	// 吃单id
 	TakerId string `json:"taker_id"`
@@ -20,6 +20,17 @@ type Trade struct {
 	Price decimal.Decimal `json:"price"`
 	// 成交时间
 	Timestamp int64 `json:"timestamp"`
+}
+
+func (t *Trade) ToMap() map[string]interface{} {
+	return map[string]interface{}{
+		"maker_id":   t.MakerId,
+		"taker_id":   t.TakerId,
+		"taker_side": t.TakerSide.String(),
+		"amount":     t.Amount.String(),
+		"price":      t.Price.String(),
+		"timestamp":  t.Timestamp,
+	}
 }
 
 func (t *Trade) ToJSON() string {

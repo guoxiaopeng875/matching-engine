@@ -49,11 +49,11 @@ func (ob *orderBook) popHeadSellOrder() *Order {
 }
 
 // removeBuyOrder 移除买单委托单
-func (ob *orderBook) removeBuyOrder(order *Order) {
-	ob.buyOrderQueue.removeOrder(order)
+func (ob *orderBook) removeBuyOrder(order *Order) bool{
+	return ob.buyOrderQueue.removeOrder(order)
 }
 
 // removeSellOrder 移除卖单委托单
-func (ob *orderBook) removeSellOrder(order *Order) {
-	ob.sellOrderQueue.removeOrder(order)
+func (ob *orderBook) removeSellOrder(order *Order) bool{
+	return ob.sellOrderQueue.removeOrder(order)
 }

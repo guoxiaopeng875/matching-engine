@@ -1,8 +1,11 @@
 package engine
 
 import (
+	"github.com/dipperin/go-ms-toolkit/json"
 	"github.com/guoxiaopeng875/matching-engine/enum"
+	"github.com/guoxiaopeng875/matching-engine/errcode"
 	"github.com/shopspring/decimal"
+	"strconv"
 )
 
 // Order 委托单
@@ -24,4 +27,45 @@ type Order struct {
 	Price decimal.Decimal `json:"price"`
 	// 订单时间
 	Timestamp int64 `json:"timestamp"`
+}
+
+func (o Order) IsValid() *errcode.Errcode {
+	if !o.Action.IsValid() || o.Symbol == "" || o.OrderId == "" || !o.Side.IsValid() || !o.Type.IsValid() || o.Amount.IsNegative() || o.Price.IsNegative() {
+		return errcode.InvalidParams
+	}
+	return errcode.OK
+}
+
+func (o *Order) FromMap(oMap map[string]interface{}) {
+	o.Action = enum.OrderAction(oMap["action"].(string))
+	o.Symbol = oMap["symbol"].(string)
+	o.OrderId = oMap["orderId"].(string)
+	o.Side = enum.OrderSide(oMap["side"].(string))
+	o.Type = enum.OrderType(oMap["type"].(string))
+	o.Amount, _ = decimal.NewFromString(oMap["amount"].(string))
+	o.Price, _ = decimal.NewFromString(oMap["price"].(string))
+	ts := oMap["timestamp"]
+	switch ts.(type) {
+	case string:
+		o.Timestamp, _ = strconv.ParseInt(ts.(string), 10, 64)
+	case int64:
+		o.Timestamp = ts.(int64)
+	}
+}
+
+func (o *Order) ToMap() map[string]interface{} {
+	return map[string]interface{}{
+		"action":    o.Action.String(),
+		"symbol":    o.Symbol,
+		"orderId":   o.OrderId,
+		"side":      o.Side.String(),
+		"type":      o.Type.String(),
+		"amount":    o.Amount.String(),
+		"price":     o.Price.String(),
+		"timestamp": o.Timestamp,
+	}
+}
+
+func (o *Order) ToJSON() string {
+	return json.StringifyJson(o)
 }

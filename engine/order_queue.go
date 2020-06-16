@@ -3,6 +3,7 @@ package engine
 import (
 	"container/list"
 	"github.com/guoxiaopeng875/matching-engine/enum"
+	"strings"
 )
 
 // orderQueue 订单队列
@@ -81,7 +82,11 @@ func (q *orderQueue) isDESC() bool {
 
 // getHeadOrder 读取头部订单
 func (q *orderQueue) getHeadOrder() *Order {
-	return q.parentList.Front().Value.(*Order)
+	front := q.parentList.Front()
+	if front == nil {
+		return nil
+	}
+	return front.Value.(*Order)
 }
 
 // popHeadOrder 读取并删除头部订单
@@ -97,15 +102,15 @@ func (q *orderQueue) getOrderElement(order *Order) *list.Element {
 }
 
 // removeOrder 移除订单
-func (q *orderQueue) removeOrder(order *Order) {
+func (q *orderQueue) removeOrder(order *Order) bool {
 	elem := q.getOrderElement(order)
 	for {
 		if elem == nil {
-			return
+			return false
 		}
 		if elem.Value.(*Order).Timestamp == order.Timestamp {
 			q.parentList.Remove(elem)
-			return
+			return true
 		}
 		elem = elem.Next()
 	}
@@ -127,4 +132,10 @@ func (q *orderQueue) getDepthPrice(depth int) (string, int) {
 	}
 	o := p.Value.(*list.List).Front().Value.(*Order)
 	return o.Price.String(), i
+}
+
+// Print 打印所有数据, 耗性能, 仅用于测试
+func (q *orderQueue) Print() string {
+	var sb strings.Builder
+	q.parentList.Len()
 }

@@ -2,9 +2,17 @@ package enum
 
 type OrderSide string
 
+func (o OrderSide) String() string {
+	return string(o)
+}
+
 const (
 	// 买单
-	Buy OrderSide = "buy"
+	SideBuy OrderSide = "buy"
 	// 卖单
-	Sell OrderSide = "sell"
+	SideSell OrderSide = "sell"
 )
+
+func (o OrderSide) IsValid() bool {
+	return o == SideBuy || o == SideSell
+}
